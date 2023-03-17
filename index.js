@@ -5,14 +5,13 @@ const cors = require('cors');
 require('dotenv').config();
 
 const Person = require('./models/person');
-const { response } = require('express');
 const app = express();
 
 const errorHandler = (error, req, res, next) => {
-  console.log(error.message);
-
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'malformatted id' });
+  } else if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message });
   }
 
   next(error);
@@ -62,7 +61,22 @@ app.delete('/api/persons/:id', (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
+  const body = req.body
+  
+  console.log("#")
+  if (!body.name) {
+    return res.status(400).json({
+      error: 'name missing'
+    })
+  }
+
+  if (!body.number) {
+    return res.status(400).json({
+      error: 'number missing'
+    })
+  }
+
   const newPerson = new Person({
     name: req.body.name,
     number: req.body.number,
@@ -70,9 +84,12 @@ app.post('/api/persons', (req, res) => {
 
   console.log(newPerson);
 
-  newPerson.save().then((savedPerson) => {
-    res.json(newPerson);
-  });
+  newPerson
+    .save()
+    .then((savedPerson) => {
+      res.json(newPerson);
+    })
+    .catch((error) => next(error));
 });
 
 app.put('/api/persons/:id', (req, res) => {
@@ -83,11 +100,13 @@ app.put('/api/persons/:id', (req, res) => {
 
   console.log(person);
 
-  Person.findByIdAndUpdate(req.params.id, person, { new: true }).then(
-    (updatedPerson) => {
-      res.json(updatedPerson);
-    }
-  );
+  Person.findByIdAndUpdate(req.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: 'query',
+  }).then((updatedPerson) => {
+    res.json(updatedPerson);
+  });
 });
 
 app.get('/api/info', (req, res) => {

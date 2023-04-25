@@ -3,7 +3,6 @@ const supertest = require('supertest');
 const app = require('../app');
 const api = supertest(app);
 const Blog = require('../models/blog');
-const exp = require('constants');
 const { describe } = require('yargs');
 
 const initialBlogs = [
@@ -12,12 +11,14 @@ const initialBlogs = [
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
     likes: 7,
+    user: '64424f8ad641bd177fed56c6',
   },
   {
     title: 'Go To Statement Considered Harmful',
     author: 'Edsger W. Dijkstra',
     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     likes: 5,
+    user: '64424f8ad641bd177fed56c6',
   },
 ];
 
@@ -41,8 +42,19 @@ test('POST is working', async () => {
     likes: 0,
   };
 
+  const tempUser = {
+    username: 'matti',
+    password: 'rosenberg',
+  };
+
+  const loginResponse = await api.post('/api/login').send(tempUser);
+
   await api
     .post('/api/blogs')
+    .set(
+      'Authorization',
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hdHRpIiwiaWQiOiI2NDQyNGY4YWQ2NDFiZDE3N2ZlZDU2YzYiLCJpYXQiOjE2ODIzMjgyNDB9.z1PwsaV-FXkMyyZZ4-JT8rCt2hreBquSm0KbS3HKnFI'
+    )
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/);
@@ -53,7 +65,14 @@ test('POST is working', async () => {
 
 test('DELETE blog', async () => {
   const blog = (await api.get('/api/blogs')).body[0];
-  await api.delete(`/api/blogs/${blog.id}`).expect(204);
+
+  await api
+    .delete(`/api/blogs/${blog.id}`)
+    .set(
+      'Authorization',
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hdHRpIiwiaWQiOiI2NDQyNGY4YWQ2NDFiZDE3N2ZlZDU2YzYiLCJpYXQiOjE2ODIzMjgyNDB9.z1PwsaV-FXkMyyZZ4-JT8rCt2hreBquSm0KbS3HKnFI'
+    )
+    .expect(204);
 });
 
 test('PATCH blog likes', async () => {
@@ -89,7 +108,14 @@ test('Like has default value of zero', async () => {
     url: 'www.nolikes.com',
   };
 
-  await api.post('/api/blogs').send(newBlog).expect(201);
+  await api
+    .post('/api/blogs')
+    .set(
+      'Authorization',
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hdHRpIiwiaWQiOiI2NDQyNGY4YWQ2NDFiZDE3N2ZlZDU2YzYiLCJpYXQiOjE2ODIzMjgyNDB9.z1PwsaV-FXkMyyZZ4-JT8rCt2hreBquSm0KbS3HKnFI'
+    )
+    .send(newBlog)
+    .expect(201);
 
   const resultBlog = await api.get('/api/blogs').expect(200);
   const blog = resultBlog.body[2];

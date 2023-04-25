@@ -1,8 +1,9 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hdHRpIiwiaWQiOiI2NDQyNGY4YWQ2NDFiZDE3N2ZlZDU2YzYiLCJpYXQiOjE2ODIzMjgyNDB9.z1PwsaV-FXkMyyZZ4-JT8rCt2hreBquSm0KbS3HKnFI
 
 {
-  "title": "Testi Blog-postaus",
+  "title": "Token extractor in use",
   "author": "Blogaaja Testinen",
   "url": "www.test.blog.com",
   "likes": "12"

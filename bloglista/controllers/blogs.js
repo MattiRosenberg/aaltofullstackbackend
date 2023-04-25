@@ -1,15 +1,18 @@
 const blogRouter = require('express').Router();
+const { response } = require('../app');
 const Blog = require('../models/blog');
+const { userExtractor } = require('../utils/middleware');
 
 blogRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate('user');
   response.status(200).json(blogs);
 });
 
-blogRouter.post('/', async (request, response) => {
+blogRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body;
+  const user = request.user
 
-  if (body.title === undefined) {
+ if (body.title === undefined) {
     response.status(400).send({ error: 'Title is missing' });
     return;
   } else if (body.author === undefined) {
@@ -22,15 +25,24 @@ blogRouter.post('/', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
+    user: user.id,
   });
 
   const result = await blog.save();
-
   response.status(201).json(result);
 });
 
-blogRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id);
+blogRouter.delete('/:id', userExtractor, async (request, response) => {
+  const user = request.user
+  const blog = await Blog.findById(request.params.id)
+
+  if (blog.user.toString() !== user.id) {
+    return response
+      .status(403)
+      .json({ error: 'cannot delete other persons blogs' });
+  }
+
+  Blog.findByIdAndRemove(request.params.id);
   response.status(204).end();
 });
 

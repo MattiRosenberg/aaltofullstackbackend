@@ -5,9 +5,7 @@ const Filter = () => {
   const dispatch = useDispatch()
   const handleChange = (event) => {
     event.preventDefault();
-
-    const content = event.target.value;
-    dispatch(filterChanged(content))
+    dispatch({type: 'filter/filterReducer', payload: event.target.value})
   };
 
   const style = {

@@ -1,19 +1,27 @@
-import { useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Filter from './components/Filter';
+import Notification from './components/Notification';
 
 const App = () => {
   const anecdotes = useSelector((state) => {
-      return state.anecdotes.filter((anecdote) =>
-      anecdote.content.toString().includes(state.filter.content)
+    return state.anecdotes.filter((anecdote) =>
+      anecdote.content.toString().includes(state.filter)
     );
   });
 
+  const dispatch = useDispatch();
+
   const vote = (id) => {
-    console.log('vote', id);
+    dispatch({ type: 'notifications/show', payload: id });
+
+    setTimeout(() => {
+      dispatch({ type: 'notifications/remove', payload: '' });
+    }, 5000);
   };
 
   return (
     <div>
+      <Notification />
       <h2>Anecdotes</h2>
       {anecdotes.map((anecdote) => (
         <div key={anecdote.id}>

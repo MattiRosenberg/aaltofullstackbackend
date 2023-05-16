@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { object } from 'prop-types';
 
 const baseUrl = 'http://localhost:3001/anecdotes';
 

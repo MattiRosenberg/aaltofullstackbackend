@@ -3,15 +3,12 @@ import Filter from './components/Filter';
 import Notification from './components/Notification';
 import Anecdotes from './components/Anecdotes';
 import { useEffect } from 'react';
-
-import anecdoteService from './services/anecdote';
+import { initializeAnecdotes } from './reducers/anecdoteReducer';
 
 const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    anecdoteService
-      .getAll()
-      .then((anecdotes) => dispatch({type: 'anecdote/setObjects', payload: anecdotes}))
+    dispatch(initializeAnecdotes());
   }, [dispatch]);
 
   const anecdotes = useSelector((state) => {

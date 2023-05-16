@@ -2,15 +2,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import Filter from './components/Filter';
 import Notification from './components/Notification';
 import Anecdotes from './components/Anecdotes';
+import { useEffect } from 'react';
+
+import anecdoteService from './services/anecdote';
 
 const App = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    anecdoteService
+      .getAll()
+      .then((anecdotes) => dispatch({type: 'anecdote/setObjects', payload: anecdotes}))
+  }, [dispatch]);
+
   const anecdotes = useSelector((state) => {
     return state.anecdotes.filter((anecdote) =>
       anecdote.content.toString().includes(state.filter)
     );
   });
-
-  const dispatch = useDispatch();
 
   const vote = (id) => {
     dispatch({ type: 'notifications/show', payload: id });

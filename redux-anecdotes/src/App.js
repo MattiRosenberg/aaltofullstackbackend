@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import Filter from './components/Filter';
 import Notification from './components/Notification';
+import Anecdotes from './components/Anecdotes';
 
 const App = () => {
   const anecdotes = useSelector((state) => {
@@ -23,6 +24,7 @@ const App = () => {
     <div>
       <Notification />
       <h2>Anecdotes</h2>
+      <Anecdotes />
       {anecdotes.map((anecdote) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>

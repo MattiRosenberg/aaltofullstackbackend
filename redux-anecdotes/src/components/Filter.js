@@ -1,11 +1,10 @@
-import { filterAnecdotes, filterChanged } from "../reducers/filterReducer";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const Filter = () => {
   const dispatch = useDispatch()
   const handleChange = (event) => {
     event.preventDefault();
-    dispatch({type: 'filter/filterReducer', payload: event.target.value})
+    dispatch({type: 'filter/by', payload: event.target.value})
   };
 
   const style = {

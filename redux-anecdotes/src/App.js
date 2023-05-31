@@ -3,7 +3,8 @@ import Filter from './components/Filter';
 import Notification from './components/Notification';
 import Anecdotes from './components/Anecdotes';
 import { useEffect } from 'react';
-import { initializeAnecdotes } from './reducers/anecdoteReducer';
+import { initializeAnecdotes, vote } from './reducers/anecdoteReducer';
+import { showNotification } from './reducers/notificationReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -17,12 +18,9 @@ const App = () => {
     );
   });
 
-  const vote = (id) => {
-    dispatch({ type: 'notifications/show', payload: id });
-
-    setTimeout(() => {
-      dispatch({ type: 'notifications/remove', payload: '' });
-    }, 5000);
+  const handleVote = (anecdote) => {
+    dispatch(vote(anecdote))
+    dispatch(showNotification(anecdote.content, 5000))
   };
 
   return (
@@ -35,7 +33,7 @@ const App = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => handleVote(anecdote)}>vote</button>
           </div>
         </div>
       ))}
